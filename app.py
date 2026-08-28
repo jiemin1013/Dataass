@@ -138,7 +138,7 @@ st.markdown("""
 
 
 /* ==========================================
-   2. 精准化 Tabs 样式：未选中白字，选中保持原生
+   2. 精准化 Tabs 样式：未选中纯白，选中保持原生红色
 ========================================== */
 
 /* 将 Tabs 容器上移进入紫色区域 */
@@ -157,7 +157,7 @@ div[data-testid="stTabs"] {
     border: none !important;
 }
 
-/* 只隐藏横跨全屏的灰色长底线，【不隐藏】红色的选中高亮线 */
+/* 只隐藏横跨全屏的灰色长底线，不碰选中状态 */
 .stTabs div[data-baseweb="tab-border"] {
     display: none !important;
 }
@@ -169,15 +169,14 @@ div[data-testid="stTabs"] {
     padding-bottom: 8px !important;
 }
 
-/* 【关键修改 1】：未选中（没被点击）的 Tab 字体强制变白 */
+/* 【关键修复】：打破 Streamlit 的深色和半透明封印 */
+/* 强制未选中的 Tab 变成纯白色，并把透明度（opacity）拉满，拒绝变暗 */
+.stTabs button[data-baseweb="tab"]:not([aria-selected="true"]) p,
 .stTabs button[data-baseweb="tab"][aria-selected="false"] p {
     color: #ffffff !important;
-    opacity: 0.85 !important; /* 微微半透明（85%），显得更有层次感 */
+    opacity: 1 !important; 
     font-weight: 600 !important;
 }
-
-/* 【关键修改 2】：点击后（选中）的颜色保持原生效果，不进行覆写，
-   这样它就会自然显示你截图里的红色文字和红色下划线。 */
 </style>
 
 <div class="gaming-header">
