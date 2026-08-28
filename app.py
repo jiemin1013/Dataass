@@ -27,54 +27,6 @@ plt.rcParams['axes.spines.top'] = False
 plt.rcParams['axes.spines.right'] = False
 
 # ==========================================
-# SMART STICKY HEADER JAVASCRIPT LOGIC
-# Inject listener: Hide on scroll down, show on scroll up
-# ==========================================
-smart_scroll_js = """
-<script>
-const parentWin = window.parent;
-const parentDoc = window.parent.document;
-
-if (!parentWin._smartHeaderInitialized) {
-    let lastScrollY = 0;
-    let ticking = false;
-
-    const scrollHandler = function(e) {
-        if (!ticking) {
-            parentWin.requestAnimationFrame(function() {
-                let currentScrollY = parentWin.scrollY;
-                // Compatible with Streamlit internal scroll container
-                if (e.target && e.target.scrollTop !== undefined && e.target.tagName !== 'IFRAME') {
-                    currentScrollY = e.target.scrollTop;
-                }
-
-                // Core detection logic
-                if (currentScrollY <= 80) {
-                    // Reached the top, reset all to show
-                    parentDoc.body.classList.remove('hide-smart-header');
-                } else if (currentScrollY > lastScrollY + 15) {
-                    // Scrolling down (added buffer to prevent jittering) -> hide
-                    parentDoc.body.classList.add('hide-smart-header');
-                } else if (currentScrollY < lastScrollY - 15) {
-                    // Scrolling up -> show
-                    parentDoc.body.classList.remove('hide-smart-header');
-                }
-                lastScrollY = currentScrollY;
-                ticking = false;
-            });
-            ticking = true;
-        }
-    };
-
-    // Capture all scroll events
-    parentDoc.addEventListener('scroll', scrollHandler, true);
-    parentWin._smartHeaderInitialized = true;
-}
-</script>
-"""
-components.html(smart_scroll_js, height=0, width=0)
-
-# ==========================================
 # 2. Advanced CSS
 # ==========================================
 st.markdown("""
@@ -133,22 +85,23 @@ div.stButton > button:focus:not(:active) {
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    background: #faf7ff;
-    border: 1px solid #eee2f7;
-    border-left: 3px solid #b45cff;
-    color: #5c4a70;
-    font-size: 13.5px;
-    line-height: 1.55;
-    padding: 10px 14px;
-    border-radius: 10px;
-    margin: 0 0 14px 0;
+    background: #ffffff;
+    border: 1px solid #eeeeee;
+    border-left: 3px solid #8b5cf6;
+    color: #555555;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 9px 13px;
+    border-radius: 8px;
+    margin: 0 0 12px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 .explain-note .en-icon {
     flex-shrink: 0;
     font-size: 14px;
     line-height: 1.55;
 }
-.explain-note b { color: #3a1050; }
+.explain-note b { color: #4c1d95; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -164,19 +117,8 @@ st.markdown("""
 /* 1. Accurately target the outer container of the Header to make it sticky */
 div.element-container:has(.gaming-header) {
     position: sticky !important;
-    top: 1.5rem !important;
+    top: 0 !important;
     z-index: 99999 !important;
-    transition: transform 0.4s cubic-bezier(0.3, 0, 0.2, 1) !important;
-}
-
-/* 2. When JS detects scrolling down, add hidden translation animation */
-body.hide-smart-header div.element-container:has(.gaming-header) {
-    transform: translateY(-250px) !important;
-}
-
-/* Tabs hide along with it */
-body.hide-smart-header div[data-testid="stTabs"] > div[data-baseweb="tab-list"] {
-    transform: translateY(-250px) !important;
 }
 
 /* ---------- MAIN HEADER ---------- */
@@ -595,7 +537,7 @@ div.element-container:has(div[data-testid="stTabs"]) {
    header wraps to a different height on very small screens) */
 div[data-testid="stTabs"] > div[data-baseweb="tab-list"] {
     position: sticky !important;
-    top: 9rem !important;
+    top: 132px !important;
     background: linear-gradient(135deg, #1c0035 0%, #2c0052 55%, #16002b 100%) !important;
     border-radius: 0 0 22px 22px !important;
     padding: 6px 35px 0 35px !important;
@@ -605,7 +547,7 @@ div[data-testid="stTabs"] > div[data-baseweb="tab-list"] {
     border-top: 1px solid rgba(255,255,255,0.06) !important;
     box-shadow: 0 15px 35px rgba(72, 0, 120, 0.2) !important;
     z-index: 99998 !important;
-    transition: transform 0.4s cubic-bezier(0.3, 0, 0.2, 1) !important;
+    transition: box-shadow 0.2s ease !important;
 }
 
 /* Individual tabs - plain, borderless, underline-on-active (fits the dark strip) */
@@ -647,6 +589,23 @@ div[data-testid="stTabs"] > div[data-baseweb="tab-list"] {
     padding-top: 22px !important;
 }
 
+
+/* Keep the navigation readable and clickable on smaller screens */
+div[data-testid="stTabs"] > div[data-baseweb="tab-list"] {
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+}
+div[data-testid="stTabs"] > div[data-baseweb="tab-list"]::-webkit-scrollbar {
+    display: none !important;
+}
+
+@media (max-width: 900px) {
+    div[data-testid="stTabs"] > div[data-baseweb="tab-list"] {
+        top: 118px !important;
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -807,11 +766,11 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-tab_eda, tab_perf, tab_why, tab_pred = st.tabs([
+tab_eda, tab_perf, tab_pred, tab_why = st.tabs([
     "DATA ANALYSIS",
     "MODEL PERFORMANCE",
-    "WHY THIS MODEL",
-    "PREDICTOR"
+    "PREDICTOR",
+    "MODEL SELECTION & JUSTIFICATION"
 ])
 
 # ------------------------------------------
@@ -875,54 +834,11 @@ with tab_eda:
     explain("These 8 charts are the exploratory analysis (EDA) behind the model: how engagement, genre, age, and play time are distributed, how play time and purchases shift with engagement level, and — in the correlation heatmap — which numeric features move together. This is what guided which features were worth feeding into the model.")
 
     # Render seamless HTML/JS interactive component for the Graphs
-    st.markdown("<p style='text-align: center; color: #666;'>Click the arrows to navigate the visual insights.</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; color:#888; font-size:13px;'>Explore the key patterns across player behaviour and engagement.</p>", unsafe_allow_html=True)
 
     eda_slider_html = generate_eda_slider_html(images_b64, graph_titles)
     components.html(eda_slider_html, height=520, scrolling=False)
 
-
-    # ---- Integrated About Section ----
-    st.markdown("#### About This System")
-    st.markdown(f"""
-    <div class="about-intro">
-    To ensure users clearly grasp the system's overarching goals directly within the primary view,
-    this dashboard cleanly analyses the <b>Online Gaming Behavior Dataset</b> and predicts a player's <b>Engagement Level</b>.
-    It turns raw gaming activity into a clear read on how engaged a player really is — built end-to-end from EDA to a live predictor.
-    </div>
-    """, unsafe_allow_html=True)
-
-    steps = [
-        ("Explore the Data", "Understand player behaviour through distributions and correlations."),
-        ("Process Features", "Derive advanced variables to maximize prediction performance."),
-        ("Train & Compare", "Tune and benchmark 4 models: Logistic Regression, Random Forest, KNN, XGBoost."),
-        ("Predict Live", "Enter a player profile and get an instant engagement prediction."),
-    ]
-
-    step_cols = st.columns([1, 0.15, 1, 0.15, 1, 0.15, 1])
-    step_idx = 0
-    for i, col in enumerate(step_cols):
-        with col:
-            if i % 2 == 1:
-                st.markdown('<div class="step-arrow">➜</div>', unsafe_allow_html=True)
-            else:
-                title, desc = steps[step_idx]
-                step_idx += 1
-                st.markdown(f"""
-                <div class="about-card">
-                    <h5>{title}</h5>
-                    <p>{desc}</p>
-                </div>
-                """, unsafe_allow_html=True)
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    st.markdown("##### Built With")
-    tech_stack = [
-        "Python", "Streamlit", "Pandas", "NumPy", "Scikit-learn",
-        "XGBoost", "Seaborn", "Matplotlib", "Plotly"
-    ]
-    badges_html = "".join([f'<span class="tech-badge">{t}</span>' for t in tech_stack])
-    st.markdown(f"<div>{badges_html}</div>", unsafe_allow_html=True)
 
 # ------------------------------------------
 # TAB 2: Model Performance
@@ -1398,37 +1314,37 @@ with tab_perf:
 
 
 # ------------------------------------------
-# TAB 3: Why This Model
+# TAB 4: Model Selection & Justification
 # ------------------------------------------
 with tab_why:
 
-    st.markdown("#### Why These Models — and Why XGBoost Won")
-    explain("This tab summarizes the reasoning behind picking these four algorithms and why XGBoost was ultimately chosen as the production model — condensed from the project's model-selection writeup.")
+    st.markdown("#### Model Selection & Justification")
+    explain("This section compares four machine learning approaches and explains why XGBoost was selected as the final model based on overall predictive performance and suitability for the problem.")
 
     model_rationale = [
         {
             "icon": "📐",
-            "name": "Logistic Regression — the baseline",
-            "why": "Included first to set a simple, interpretable reference point. It draws linear decision boundaries between Low / Medium / High engagement, which is fast to train and easy to explain, but struggles when the true relationship is non-linear.",
-            "result": "Solid baseline at 90.4% accuracy and 0.957 AUC — proving there are real linear signals in the data, but leaving room for more flexible models to do better."
+            "name": "Logistic Regression — Baseline",
+            "why": "Provides a simple, interpretable linear benchmark. It is fast to train and establishes whether the data contains useful linear signals, but it is less effective when relationships are non-linear.",
+            "result": "90.4% accuracy and 0.957 AUC. This confirms meaningful linear patterns while leaving room for more flexible models."
         },
         {
             "icon": "🌳",
-            "name": "Random Forest — the ensemble check",
-            "why": "Chosen to test whether combining many decision trees could capture non-linear interactions and handle the mixed categorical/numeric features better than a single linear model.",
-            "result": "Jumped to 95.1% accuracy and 0.985 AUC, with zero extreme mix-ups between Low and High — confirming the relationship really is non-linear."
+            "name": "Random Forest — Non-Linear Benchmark",
+            "why": "Tests whether an ensemble of decision trees can capture non-linear interactions and handle mixed categorical and numerical features more effectively than a linear model.",
+            "result": "95.1% accuracy and 0.985 AUC, substantially improving on the baseline and confirming the value of non-linear modelling."
         },
         {
             "icon": "📍",
-            "name": "K-Nearest Neighbours — the distance-based contrast",
-            "why": "Added as a completely different family of algorithm (distance-based rather than rule- or coefficient-based), partly to stress-test whether feature scaling mattered — KNN only works fairly once every feature is on the same scale.",
-            "result": "The weakest of the four at 84.6% accuracy and 0.940 AUC. Players near the boundary between engagement tiers are hard to separate by raw distance alone, especially against the dominant Medium class."
+            "name": "K-Nearest Neighbours — Distance-Based Contrast",
+            "why": "Provides a fundamentally different distance-based approach and tests the effect of feature scaling. KNN depends on comparable feature scales and local similarity.",
+            "result": "84.6% accuracy and 0.940 AUC — the weakest result, suggesting that raw distance is less effective for separating engagement tiers in this feature space."
         },
         {
             "icon": "🚀",
-            "name": "XGBoost — the advanced ensemble",
-            "why": "Selected as the strongest candidate: it builds trees sequentially to correct previous mistakes, and its built-in regularization helps it avoid overfitting even on a large, 40,000+ row dataset.",
-            "result": "Best across the board — 96.9% accuracy, 0.969 F1-Score, and 0.989 AUC, with the fewest and least severe misclassifications of any model tested."
+            "name": "XGBoost — Final Selected Model",
+            "why": "Uses sequentially boosted decision trees to correct previous errors while applying regularization to control overfitting. It is well suited to complex, non-linear relationships in this dataset.",
+            "result": "Best overall performance: 96.9% accuracy, 0.969 F1-Score and 0.989 AUC, with the fewest and least severe misclassifications."
         },
     ]
 
@@ -1441,6 +1357,43 @@ with tab_why:
                 st.markdown(f'<div class="section-header"><span class="dot"></span><span class="label">{item["icon"]} {item["name"]}</span></div>', unsafe_allow_html=True)
                 st.markdown(f"**Why it's here:** {item['why']}")
                 st.markdown(f"**What happened:** {item['result']}")
+
+    st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+
+    # --- Comparative Model Performance Chart ---
+    with st.container(border=True):
+        st.markdown('<div class="bento-marker"></div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-header"><span class="dot"></span><span class="label"> Comparative Model Performance</span></div>', unsafe_allow_html=True)
+        explain("The comparison makes the selection decision explicit: XGBoost records the highest Accuracy, F1-Score and AUC among the four tested algorithms.")
+
+        plot_df_selection = comparison_df.melt(
+            id_vars="Model",
+            value_vars=["Accuracy", "F1-Score", "AUC"],
+            var_name="Metric",
+            value_name="Score"
+        )
+
+        fig_selection, ax_selection = plt.subplots(figsize=(12, 6))
+        sns.barplot(
+            data=plot_df_selection,
+            x="Model",
+            y="Score",
+            hue="Metric",
+            palette="viridis",
+            ax=ax_selection
+        )
+        ax_selection.set_title("Comparative Model Performance", fontsize=16, fontweight="bold", pad=15)
+        ax_selection.set_xlabel("Machine Learning Model", fontsize=12)
+        ax_selection.set_ylabel("Score", fontsize=12)
+        ax_selection.set_ylim(0, 1.15)
+        ax_selection.legend(bbox_to_anchor=(1.01, 1), loc="upper left", title="Metrics")
+
+        for container in ax_selection.containers:
+            ax_selection.bar_label(container, fmt="%.3f", padding=3)
+
+        sns.despine()
+        plt.tight_layout()
+        st.pyplot(fig_selection, use_container_width=True)
 
     st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
 
@@ -1479,8 +1432,52 @@ with tab_why:
 - **Validation rigor.** Results come from a single stratified train/test split. Repeated k-fold cross-validation would give a tighter, more trustworthy estimate of how these numbers generalize to new players.
         """)
 
+    # --- About This System ---
+    # ---- Integrated About Section ----
+    st.markdown("#### About This System")
+    st.markdown(f"""
+    <div class="about-intro">
+    To ensure users clearly grasp the system's overarching goals directly within the primary view,
+    this dashboard cleanly analyses the <b>Online Gaming Behavior Dataset</b> and predicts a player's <b>Engagement Level</b>.
+    It turns raw gaming activity into a clear read on how engaged a player really is — built end-to-end from EDA to a live predictor.
+    </div>
+    """, unsafe_allow_html=True)
+
+    steps = [
+        ("Explore the Data", "Understand player behaviour through distributions and correlations."),
+        ("Process Features", "Derive advanced variables to maximize prediction performance."),
+        ("Train & Compare", "Tune and benchmark 4 models: Logistic Regression, Random Forest, KNN, XGBoost."),
+        ("Predict Live", "Enter a player profile and get an instant engagement prediction."),
+    ]
+
+    step_cols = st.columns([1, 0.15, 1, 0.15, 1, 0.15, 1])
+    step_idx = 0
+    for i, col in enumerate(step_cols):
+        with col:
+            if i % 2 == 1:
+                st.markdown('<div class="step-arrow">➜</div>', unsafe_allow_html=True)
+            else:
+                title, desc = steps[step_idx]
+                step_idx += 1
+                st.markdown(f"""
+                <div class="about-card">
+                    <h5>{title}</h5>
+                    <p>{desc}</p>
+                </div>
+                """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    st.markdown("##### Built With")
+    tech_stack = [
+        "Python", "Streamlit", "Pandas", "NumPy", "Scikit-learn",
+        "XGBoost", "Seaborn", "Matplotlib", "Plotly"
+    ]
+    badges_html = "".join([f'<span class="tech-badge">{t}</span>' for t in tech_stack])
+    st.markdown(f"<div>{badges_html}</div>", unsafe_allow_html=True)
+
 # ------------------------------------------
-# TAB 4: Prediction Result
+# TAB 3: Prediction Result
 # ------------------------------------------
 with tab_pred:
     st.markdown("###  Player Engagement Predictor")
