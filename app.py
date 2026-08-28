@@ -111,6 +111,7 @@ div.stButton > button:focus:not(:active) {
 
 st.markdown("""
 <style>
+/* 1. 紫色 Header 背景不变 */
 .gaming-header {
     width: 100%;
     padding: 38px 35px 75px 35px !important; 
@@ -135,39 +136,56 @@ st.markdown("""
 .header-title { margin: 0; color: white; font-size: 32px; font-weight: 800; letter-spacing: -0.5px; }
 .header-subtitle { margin-top: 5px; color: rgba(255,255,255,0.68); font-size: 14px; letter-spacing: 0.5px; }
 
+/* ==========================================
+   2. 修复 Tabs 样式 (针对 Streamlit 新版本 DOM 结构)
+========================================== */
+
+/* 强制上移整个 Tabs 容器 */
 div[data-testid="stTabs"] {
     margin-top: -65px !important; 
     position: relative !important;
     z-index: 999 !important;
 }
 
-div[data-baseweb="tab-list"] {
+/* 彻底透明化所有背景层，消灭那条灰白色的底带 */
+div[data-testid="stTabs"] > div,
+div[data-testid="stTabs"] div[data-baseweb="tab-list"] {
     background-color: transparent !important;
-    border: none !important;
-    padding: 0 35px !important;
-}
-
-div[data-baseweb="tab-border"], 
-div[data-baseweb="tab-highlight"] {
-    display: none !important;
-    opacity: 0 !important;
-}
-
-div[data-baseweb="tab"] {
     background: transparent !important;
     border: none !important;
 }
-div[data-baseweb="tab"] p {
+
+/* 隐藏 Streamlit 原生的红色动态高亮条和底线 */
+div[data-baseweb="tab-highlight"],
+div[data-baseweb="tab-border"] {
+    display: none !important;
+    opacity: 0 !important;
+    background-color: transparent !important;
+}
+
+/* 针对新版 button 标签的样式设定 */
+button[data-baseweb="tab"] {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 3px solid transparent !important; /* 预留边框防止点击时跳动 */
+    outline: none !important;
+}
+
+/* 未选中的 Tab 文字：半透明白 */
+button[data-baseweb="tab"] p {
     color: rgba(255, 255, 255, 0.6) !important;
     font-size: 14px !important;
     font-weight: bold !important;
 }
 
-div[data-baseweb="tab"][aria-selected="true"] {
-    background: transparent !important;
+/* 选中的 Tab：纯白文字 + 浅紫色下划线，去除点击后的外发光(box-shadow) */
+button[data-baseweb="tab"][aria-selected="true"] {
     border-bottom: 3px solid #d9a7ff !important;
+    background: transparent !important;
+    box-shadow: none !important;
 }
-div[data-baseweb="tab"][aria-selected="true"] p {
+
+button[data-baseweb="tab"][aria-selected="true"] p {
     color: #ffffff !important;
 }
 </style>
