@@ -111,7 +111,7 @@ div.stButton > button:focus:not(:active) {
 
 st.markdown("""
 <style>
-/* 1. 紫色 Header 背景不变 */
+/* 1. 紫色 Header */
 .gaming-header {
     width: 100%;
     padding: 38px 35px 75px 35px !important; 
@@ -136,56 +136,54 @@ st.markdown("""
 .header-title { margin: 0; color: white; font-size: 32px; font-weight: 800; letter-spacing: -0.5px; }
 .header-subtitle { margin-top: 5px; color: rgba(255,255,255,0.68); font-size: 14px; letter-spacing: 0.5px; }
 
+
 /* ==========================================
-   2. 修复 Tabs 样式 (针对 Streamlit 新版本 DOM 结构)
+   2. 终极版 Tabs 穿透样式
 ========================================== */
 
-/* 强制上移整个 Tabs 容器 */
+/* 上移容器 */
 div[data-testid="stTabs"] {
     margin-top: -65px !important; 
     position: relative !important;
-    z-index: 999 !important;
+    z-index: 9999 !important;
 }
 
-/* 彻底透明化所有背景层，消灭那条灰白色的底带 */
-div[data-testid="stTabs"] > div,
-div[data-testid="stTabs"] div[data-baseweb="tab-list"] {
+/* 强制透明化 Tab 的所有外层包裹层（彻底消灭灰白色背景块） */
+.stTabs, 
+.stTabs > div:first-child,
+.stTabs [data-baseweb="tab-list"] {
     background-color: transparent !important;
     background: transparent !important;
     border: none !important;
 }
 
-/* 隐藏 Streamlit 原生的红色动态高亮条和底线 */
-div[data-baseweb="tab-highlight"],
-div[data-baseweb="tab-border"] {
+/* 隐藏 Streamlit 原生的灰色底线和红色滑动条 */
+.stTabs [data-baseweb="tab-border"],
+.stTabs [data-baseweb="tab-highlight"] {
     display: none !important;
-    opacity: 0 !important;
     background-color: transparent !important;
 }
 
-/* 针对新版 button 标签的样式设定 */
-button[data-baseweb="tab"] {
-    background: transparent !important;
+/* 针对所有 Tab 按钮的基础设置 */
+.stTabs button[data-baseweb="tab"] {
+    background-color: transparent !important;
     border: none !important;
-    border-bottom: 3px solid transparent !important; /* 预留边框防止点击时跳动 */
-    outline: none !important;
+    padding-bottom: 10px !important;
+    border-bottom: 3px solid transparent !important; /* 占位，防止点击时跳动 */
 }
 
-/* 未选中的 Tab 文字：半透明白 */
-button[data-baseweb="tab"] p {
-    color: rgba(255, 255, 255, 0.6) !important;
-    font-size: 14px !important;
-    font-weight: bold !important;
+/* 未选中状态：半透明白字 (直接穿透到最底层的 p 标签) */
+.stTabs button[data-baseweb="tab"] div[data-testid="stMarkdownContainer"] p {
+    color: rgba(255, 255, 255, 0.65) !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
 }
 
-/* 选中的 Tab：纯白文字 + 浅紫色下划线，去除点击后的外发光(box-shadow) */
-button[data-baseweb="tab"][aria-selected="true"] {
+/* 选中状态：纯白字 + 浅紫色底线 */
+.stTabs button[data-baseweb="tab"][aria-selected="true"] {
     border-bottom: 3px solid #d9a7ff !important;
-    background: transparent !important;
-    box-shadow: none !important;
 }
-
-button[data-baseweb="tab"][aria-selected="true"] p {
+.stTabs button[data-baseweb="tab"][aria-selected="true"] div[data-testid="stMarkdownContainer"] p {
     color: #ffffff !important;
 }
 </style>
@@ -201,7 +199,6 @@ button[data-baseweb="tab"][aria-selected="true"] p {
     </div>
 </div>
 """, unsafe_allow_html=True)
-
 # ==========================================
 # 3. Data Loading & Graph Generation (Cached)
 # ==========================================
