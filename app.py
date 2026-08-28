@@ -807,9 +807,10 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-tab_eda, tab_perf, tab_pred = st.tabs([
+tab_eda, tab_perf, tab_why, tab_pred = st.tabs([
     "DATA ANALYSIS",
     "MODEL PERFORMANCE",
+    "WHY THIS MODEL",
     "PREDICTOR"
 ])
 
@@ -1397,14 +1398,96 @@ with tab_perf:
 
 
 # ------------------------------------------
-# TAB 3: Prediction Result
+# TAB 3: Why This Model
+# ------------------------------------------
+with tab_why:
+
+    st.markdown("#### Why These Models — and Why XGBoost Won")
+    explain("This tab summarizes the reasoning behind picking these four algorithms and why XGBoost was ultimately chosen as the production model — condensed from the project's model-selection writeup.")
+
+    model_rationale = [
+        {
+            "icon": "📐",
+            "name": "Logistic Regression — the baseline",
+            "why": "Included first to set a simple, interpretable reference point. It draws linear decision boundaries between Low / Medium / High engagement, which is fast to train and easy to explain, but struggles when the true relationship is non-linear.",
+            "result": "Solid baseline at 90.4% accuracy and 0.957 AUC — proving there are real linear signals in the data, but leaving room for more flexible models to do better."
+        },
+        {
+            "icon": "🌳",
+            "name": "Random Forest — the ensemble check",
+            "why": "Chosen to test whether combining many decision trees could capture non-linear interactions and handle the mixed categorical/numeric features better than a single linear model.",
+            "result": "Jumped to 95.1% accuracy and 0.985 AUC, with zero extreme mix-ups between Low and High — confirming the relationship really is non-linear."
+        },
+        {
+            "icon": "📍",
+            "name": "K-Nearest Neighbours — the distance-based contrast",
+            "why": "Added as a completely different family of algorithm (distance-based rather than rule- or coefficient-based), partly to stress-test whether feature scaling mattered — KNN only works fairly once every feature is on the same scale.",
+            "result": "The weakest of the four at 84.6% accuracy and 0.940 AUC. Players near the boundary between engagement tiers are hard to separate by raw distance alone, especially against the dominant Medium class."
+        },
+        {
+            "icon": "🚀",
+            "name": "XGBoost — the advanced ensemble",
+            "why": "Selected as the strongest candidate: it builds trees sequentially to correct previous mistakes, and its built-in regularization helps it avoid overfitting even on a large, 40,000+ row dataset.",
+            "result": "Best across the board — 96.9% accuracy, 0.969 F1-Score, and 0.989 AUC, with the fewest and least severe misclassifications of any model tested."
+        },
+    ]
+
+    rc1, rc2 = st.columns(2)
+    rationale_cols = [rc1, rc2, rc1, rc2]
+    for i, item in enumerate(model_rationale):
+        with rationale_cols[i]:
+            with st.container(border=True):
+                st.markdown('<div class="bento-marker"></div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="section-header"><span class="dot"></span><span class="label">{item["icon"]} {item["name"]}</span></div>', unsafe_allow_html=True)
+                st.markdown(f"**Why it's here:** {item['why']}")
+                st.markdown(f"**What happened:** {item['result']}")
+
+    st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+
+    # --- Final verdict, reusing the comparison table already built in the Model Performance tab ---
+    st.markdown('<div class="section-header" style="margin-top:6px;"><span class="dot"></span><span class="label" style="font-size:19px;">🏆 The Final Call</span></div>', unsafe_allow_html=True)
+
+    st.markdown(f"""
+    <div class="winner-banner">
+        <b>{best_row['Model']}</b> was chosen as the deployed model for this app. It posted the best score on every headline metric —
+        <b>{best_row['Accuracy']:.1%}</b> accuracy, <b>{comparison_df.loc[comparison_df['Model']==best_row['Model'], 'F1-Score'].values[0]:.3f}</b> macro F1-score, and
+        <b>{best_row['AUC']:.1%}</b> AUC — meaning it balances all three engagement tiers well rather than just favoring the majority class.
+    </div>
+    """, unsafe_allow_html=True)
+
+    explain("A single accuracy number can hide a model that only does well on the most common class. Macro F1-Score treats Low, Medium, and High equally, so a high macro F1 (like XGBoost's 0.969) means the model is genuinely reliable across every engagement tier — not just the easy majority one.")
+
+    with st.container(border=True):
+        st.markdown('<div class="bento-marker"></div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-header"><span class="dot"></span><span class="label"> At a Glance</span></div>', unsafe_allow_html=True)
+        metric_cols_why = ["Accuracy", "Precision", "Recall", "F1-Score", "AUC"]
+        st.dataframe(
+            comparison_df.sort_values("Accuracy", ascending=False)
+                .style.format({c: "{:.2%}" for c in metric_cols_why})
+                .highlight_max(subset=metric_cols_why, props="background-color:#f2e6ff; color:#6A0DAD; font-weight:700;"),
+            use_container_width=True,
+            hide_index=True
+        )
+
+    st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
+
+    with st.expander("⚠️ Known Limitations & Where This Could Improve", expanded=False):
+        st.markdown("""
+- **Metric choice matters.** Because this is a 3-class problem, evaluation leans on F1-Score, the Confusion Matrix, and One-vs-Rest AUC rather than regression-style error metrics — those assume a continuous, ordered output, which engagement level isn't.
+- **More tuning headroom.** Random Forest and XGBoost could likely improve further with systematic hyperparameter search (e.g. Bayesian optimization) over tree depth, learning rate, and sampling ratios.
+- **KNN's ceiling.** KNN's accuracy is capped by the "curse of dimensionality" — dimensionality reduction or a learned distance metric could help it compete more closely with the tree-based models.
+- **Validation rigor.** Results come from a single stratified train/test split. Repeated k-fold cross-validation would give a tighter, more trustworthy estimate of how these numbers generalize to new players.
+        """)
+
+# ------------------------------------------
+# TAB 4: Prediction Result
 # ------------------------------------------
 with tab_pred:
     st.markdown("###  Player Engagement Predictor")
     st.markdown("Adjust the player features below to simulate and predict their engagement level.")
 
     # ==========================================
-    # TAB 3 Advanced CSS design injection (Fits Bento Style)
+    # TAB 4 Advanced CSS design injection (Fits Bento Style)
     # ==========================================
     st.markdown("""
     <style>
@@ -1512,40 +1595,53 @@ with tab_pred:
 
         selected_model_name = st.session_state.predictor_model
 
-        st.markdown("<div style='height: 6px;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
 
-        with st.container(border=True):
-            st.markdown('<div class="bento-marker"></div>', unsafe_allow_html=True)
+        # --- Three boxed input cards, side by side ---
+        g1, g2, g3 = st.columns(3)
 
-            g1, g2, g3 = st.columns(3)
-            with g1:
-                st.markdown('<div class="input-group-label">👤 Player Profile</div>', unsafe_allow_html=True)
+        with g1:
+            with st.container(border=True):
+                st.markdown('<div class="bento-marker"></div>', unsafe_allow_html=True)
+                st.markdown('<div class="section-header"><span class="dot"></span><span class="label">👤 Player Profile</span></div>', unsafe_allow_html=True)
                 age = st.slider("Age", int(df['Age'].min()), int(df['Age'].max()), 25)
                 gender = st.selectbox("Gender", df['Gender'].unique())
                 location = st.selectbox("Location", df['Location'].unique())
-            with g2:
-                st.markdown('<div class="input-group-label">🎮 Game Setup</div>', unsafe_allow_html=True)
+
+        with g2:
+            with st.container(border=True):
+                st.markdown('<div class="bento-marker"></div>', unsafe_allow_html=True)
+                st.markdown('<div class="section-header"><span class="dot"></span><span class="label">🎮 Game Setup</span></div>', unsafe_allow_html=True)
                 genre = st.selectbox("Game Genre", df['GameGenre'].unique())
                 difficulty = st.selectbox("Game Difficulty", df['GameDifficulty'].unique())
                 in_purchases_label = st.selectbox("In-Game Purchases", ["No", "Yes"])
                 in_purchases = 1 if in_purchases_label == "Yes" else 0
-            with g3:
-                st.markdown('<div class="input-group-label">📊 Play Behavior</div>', unsafe_allow_html=True)
+
+        with g3:
+            with st.container(border=True):
+                st.markdown('<div class="bento-marker"></div>', unsafe_allow_html=True)
+                st.markdown('<div class="section-header"><span class="dot"></span><span class="label">📊 Play Behavior</span></div>', unsafe_allow_html=True)
                 play_time = st.number_input("Play Time (Hrs/session)", 0.0, 24.0, 10.0)
                 sessions = st.slider("Sessions/Week", int(df['SessionsPerWeek'].min()), int(df['SessionsPerWeek'].max()), 5)
                 avg_duration = st.slider("Avg Session (Mins)", int(df['AvgSessionDurationMinutes'].min()), int(df['AvgSessionDurationMinutes'].max()), 60)
 
-            st.markdown("<div style='height: 6px;'></div>", unsafe_allow_html=True)
-            st.markdown('<div class="input-group-label">🏆 Progress</div>', unsafe_allow_html=True)
+        # --- Progress: its own full-width boxed card ---
+        with st.container(border=True):
+            st.markdown('<div class="bento-marker"></div>', unsafe_allow_html=True)
+            st.markdown('<div class="section-header"><span class="dot"></span><span class="label">🏆 Progress</span></div>', unsafe_allow_html=True)
             p1, p2 = st.columns(2)
             with p1:
                 player_level = st.slider("Player Level", int(df['PlayerLevel'].min()), int(df['PlayerLevel'].max()), 30)
             with p2:
                 achievements = st.slider("Achievements Unlocked", int(df['AchievementsUnlocked'].min()), int(df['AchievementsUnlocked'].max()), 15)
 
-            st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+        # --- Clean, centered standalone CTA (kept out of the card grid on purpose) ---
+        st.markdown("<div style='height: 6px;'></div>", unsafe_allow_html=True)
+        cta_l, cta_mid, cta_r = st.columns([1, 1.4, 1])
+        with cta_mid:
+            predict_clicked = st.button("🎯 Predict Engagement", use_container_width=True)
 
-            if st.button(" Predict Engagement", use_container_width=True):
+        if predict_clicked:
                 # Show Loading animation and complete model prediction in the background
                 with st.spinner("Analyzing player profile..."):
                     time.sleep(0.8)
