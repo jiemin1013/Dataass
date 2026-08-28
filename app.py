@@ -112,13 +112,20 @@ div.stButton > button:focus:not(:active) {
 st.markdown("""
 <style>
 
-/* ---------- Smart sticky effect core control ---------- */
+/* ---------- Fixed Header + Fused Navigation ---------- */
 
-/* 1. Accurately target the outer container of the Header to make it sticky */
 div.element-container:has(.gaming-header) {
     position: sticky !important;
     top: 0 !important;
     z-index: 99999 !important;
+    margin: 0 !important;
+}
+
+/* Create room at the bottom of the purple header for the tab navigation */
+.gaming-header {
+    padding: 30px 35px 78px 35px !important;
+    margin: 0 !important;
+    border-radius: 22px 22px 0 0 !important;
 }
 
 /* ---------- MAIN HEADER ---------- */
@@ -515,100 +522,104 @@ def generate_eda_slider_html(images_b64, titles):
     return html
 
 # ==========================================
-# PREMIUM NAVIGATION TABS — FUSED INTO THE HEADER
+# PREMIUM NAVIGATION TABS — INSIDE THE HEADER
 # ==========================================
-# Streamlit renders st.tabs as its own block right after the header markdown,
-# so we (1) close the tiny default gap between the two blocks and
-# (2) give the tab-list the same dark gradient + rounded-bottom corners as the
-# header, so visually they read as a single header unit instead of two pieces.
 
 st.markdown("""
 <style>
-
-/* Pull the tab block flush against the header, cancelling Streamlit's default gap */
+/* Visually pull the Streamlit tab block into the purple header */
 div.element-container:has(div[data-testid="stTabs"]) {
-    margin-top: -14px !important;
-    position: relative;
-    z-index: 99998;
+    margin-top: -72px !important;
+    position: relative !important;
+    z-index: 100000 !important;
 }
 
-/* The tab strip itself continues the header's dark gradient + shadow, and
-   stays docked directly under the sticky header (fine-tune "top" if your
-   header wraps to a different height on very small screens) */
+/* Transparent navigation strip = same purple background as the header */
 div[data-testid="stTabs"] > div[data-baseweb="tab-list"] {
     position: sticky !important;
-    top: 132px !important;
-    background: linear-gradient(135deg, #1c0035 0%, #2c0052 55%, #16002b 100%) !important;
+    top: 112px !important;
+    z-index: 100000 !important;
+    width: 100% !important;
+    background: transparent !important;
+    border: none !important;
     border-radius: 0 0 22px 22px !important;
-    padding: 6px 35px 0 35px !important;
+    padding: 7px 35px 0 35px !important;
     margin: 0 !important;
-    gap: 10px !important;
-    border-bottom: none !important;
-    border-top: 1px solid rgba(255,255,255,0.06) !important;
-    box-shadow: 0 15px 35px rgba(72, 0, 120, 0.2) !important;
-    z-index: 99998 !important;
-    transition: box-shadow 0.2s ease !important;
+    gap: 8px !important;
+    box-shadow: none !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none !important;
 }
 
-/* Individual tabs - plain, borderless, underline-on-active (fits the dark strip) */
+div[data-testid="stTabs"] > div[data-baseweb="tab-list"]::-webkit-scrollbar {
+    display: none !important;
+}
+
 .stTabs [data-baseweb="tab"] {
-    height: 46px !important;
-    padding: 0 4px !important;
+    height: 42px !important;
+    padding: 0 5px !important;
+    margin-right: 25px !important;
     background: transparent !important;
     border: none !important;
     border-radius: 0 !important;
-    margin-right: 22px !important;
     transition: all 0.2s ease !important;
 }
+
 .stTabs [data-baseweb="tab"]:hover {
     background: transparent !important;
 }
+
 .stTabs [data-baseweb="tab"][aria-selected="true"] {
     background: transparent !important;
-    border-bottom: 3px solid #b45cff !important;
+    border-bottom: 3px solid #d9a7ff !important;
     box-shadow: none !important;
 }
 
-/* Remove default underline / border indicators, we draw our own */
 .stTabs [data-baseweb="tab-highlight"],
 .stTabs [data-baseweb="tab-border"] {
     display: none !important;
 }
 
-/* Tab text — soft white when inactive, bright white when active */
 .stTabs [data-baseweb="tab"] p {
-    color: rgba(255,255,255,0.55) !important;
-    letter-spacing: 0.5px;
+    color: rgba(255,255,255,0.62) !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.45px !important;
+    white-space: nowrap !important;
 }
+
 .stTabs [data-baseweb="tab"][aria-selected="true"] p {
     color: #ffffff !important;
 }
 
-/* Give normal breathing room to the content below the fused header+tabs */
 .stTabs [data-baseweb="tab-panel"] {
-    padding-top: 22px !important;
-}
-
-
-/* Keep the navigation readable and clickable on smaller screens */
-div[data-testid="stTabs"] > div[data-baseweb="tab-list"] {
-    overflow-x: auto !important;
-    scrollbar-width: none !important;
-}
-div[data-testid="stTabs"] > div[data-baseweb="tab-list"]::-webkit-scrollbar {
-    display: none !important;
+    padding-top: 25px !important;
 }
 
 @media (max-width: 900px) {
-    div[data-testid="stTabs"] > div[data-baseweb="tab-list"] {
-        top: 118px !important;
+    .gaming-header {
         padding-left: 18px !important;
         padding-right: 18px !important;
+        padding-bottom: 76px !important;
+    }
+
+    div.element-container:has(div[data-testid="stTabs"]) {
+        margin-top: -70px !important;
+    }
+
+    div[data-testid="stTabs"] > div[data-baseweb="tab-list"] {
+        top: 108px !important;
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+    }
+
+    .stTabs [data-baseweb="tab"] {
+        margin-right: 18px !important;
     }
 }
 </style>
 """, unsafe_allow_html=True)
-
 
 # ==========================================
 # MODEL PERFORMANCE — BENTO CARD SYSTEM
