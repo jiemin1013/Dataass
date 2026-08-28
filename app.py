@@ -162,20 +162,42 @@ div[data-testid="stTabs"] {
     display: none !important;
 }
 
-/* 针对所有 Tab 按钮的基础排版 */
 .stTabs button[data-baseweb="tab"] {
     background-color: transparent !important;
     border: none !important;
-    padding-bottom: 8px !important;
+    padding: 0 0 8px 0 !important;
 }
 
-/* 【关键修复】：打破 Streamlit 的深色和半透明封印 */
-/* 强制未选中的 Tab 变成纯白色，并把透明度（opacity）拉满，拒绝变暗 */
-.stTabs button[data-baseweb="tab"]:not([aria-selected="true"]) p,
-.stTabs button[data-baseweb="tab"][aria-selected="false"] p {
+/* ==========================================
+   TAB TEXT COLOR
+   ========================================== */
+
+/* 未选择的 Tab：纯白色 */
+.stTabs button[data-baseweb="tab"][aria-selected="false"],
+.stTabs button[data-baseweb="tab"][aria-selected="false"] *,
+.stTabs button[data-baseweb="tab"][aria-selected="false"] p,
+.stTabs button[data-baseweb="tab"][aria-selected="false"] span,
+.stTabs button[data-baseweb="tab"][aria-selected="false"] div {
     color: #ffffff !important;
-    opacity: 1 !important; 
+    opacity: 1 !important;
     font-weight: 600 !important;
+}
+
+/* Hover 时依然保持白色 */
+.stTabs button[data-baseweb="tab"][aria-selected="false"]:hover,
+.stTabs button[data-baseweb="tab"][aria-selected="false"]:hover *,
+.stTabs button[data-baseweb="tab"][aria-selected="false"]:hover p {
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+/* 当前选中的 Tab：保持红色 */
+.stTabs button[data-baseweb="tab"][aria-selected="true"],
+.stTabs button[data-baseweb="tab"][aria-selected="true"] *,
+.stTabs button[data-baseweb="tab"][aria-selected="true"] p {
+    color: #ff3b5c !important;
+    opacity: 1 !important;
+    font-weight: 700 !important;
 }
 </style>
 
