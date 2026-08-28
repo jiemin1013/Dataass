@@ -32,7 +32,7 @@ plt.rcParams['axes.spines.right'] = False
 st.markdown("""
 <style>
 .block-container { padding-top: 1.5rem !important; }
-
+ 
 /* 3D Metric Cards styling with hover effect */
 [data-testid="stMetric"] {
     background-color: #ffffff !important;
@@ -46,13 +46,13 @@ st.markdown("""
     transform: translateY(-5px) !important;
     box-shadow: 0px 10px 20px rgba(106, 13, 173, 0.2) !important;
 }
-
+ 
 /* Streamlit Native UI Overrides */
 button[data-baseweb="tab"] > div[data-testid="stMarkdownContainer"] > p {
     font-size: 16px !important;
     font-weight: bold !important;
 }
-
+ 
 div.stButton > button {
     background: linear-gradient(180deg, #3a0a63 0%, #26004a 55%, #16002b 100%) !important;
     color: white !important;
@@ -79,7 +79,7 @@ div.stButton > button:active {
 div.stButton > button:focus:not(:active) {
     box-shadow: 0 5px 0 #4a0880, 0 8px 16px rgba(106,13,173,0.35) !important;
 }
-
+ 
 /* ---- Reusable "what am I looking at" explanation note ---- */
 .explain-note {
     display: flex;
@@ -104,48 +104,41 @@ div.stButton > button:focus:not(:active) {
 .explain-note b { color: #4c1d95; }
 </style>
 """, unsafe_allow_html=True)
-
+ 
 # ==========================================
 # PREMIUM HEADER
 # ==========================================
-
+ 
 st.markdown("""
 <style>
-
+ 
 /* ---------- Fixed Header + Fused Navigation ---------- */
-
+ 
 div.element-container:has(.gaming-header) {
     position: sticky !important;
     top: 0 !important;
     z-index: 99999 !important;
     margin: 0 !important;
 }
-
-/* Create room at the bottom of the purple header for the tab navigation */
-.gaming-header {
-    padding: 30px 35px 78px 35px !important;
-    margin: 0 !important;
-    border-radius: 22px 22px 0 0 !important;
-}
-
+ 
 /* ---------- MAIN HEADER ---------- */
-
+ 
 .gaming-header {
     width: 100%;
-    padding: 38px 35px 28px 35px;
-    margin-bottom: 0px; /* Remove bottom margin to make content below tighter */
+    padding: 34px 35px 92px 35px; /* extra bottom padding reserves room for the fused tab bar */
+    margin-bottom: 0px;
     border-radius: 22px 22px 0 0; /* Only round the top — the tab bar below rounds the bottom, so the two read as one block */
     overflow: hidden;
     position: relative;
-
+ 
     background: radial-gradient(circle at 90% 20%, rgba(155, 89, 182, 0.25), transparent 35%),
                 radial-gradient(circle at 10% 80%, rgba(106, 13, 173, 0.18), transparent 35%),
                 linear-gradient(135deg, #16002b 0%, #26004a 45%, #12001f 100%);
     box-shadow: 0 15px 45px rgba(72, 0, 120, 0.18);
 }
-
+ 
 /* Decorative glow */
-
+ 
 .gaming-header::before {
     content: "";
     position: absolute;
@@ -154,11 +147,11 @@ div.element-container:has(.gaming-header) {
     right: -100px;
     top: -130px;
     border-radius: 50%;
-
+ 
     background: rgba(190, 120, 255, 0.15);
     filter: blur(20px);
 }
-
+ 
 .gaming-header::after {
     content: "";
     position: absolute;
@@ -170,14 +163,14 @@ div.element-container:has(.gaming-header) {
     background-size: 200% 100%;
     animation: gradientMove 4s linear infinite;
 }
-
+ 
 @keyframes gradientMove {
     0% { background-position: 0% 50%; }
     100% { background-position: 200% 50%; }
 }
-
+ 
 /* Header content */
-
+ 
 .header-content {
     position: relative;
     z-index: 2;
@@ -185,15 +178,15 @@ div.element-container:has(.gaming-header) {
     align-items: center;
     justify-content: space-between;
 }
-
+ 
 /* Logo */
-
+ 
 .logo-area {
     display: flex;
     align-items: center;
     gap: 18px;
 }
-
+ 
 .logo-icon {
     width: 65px;
     height: 65px;
@@ -206,9 +199,9 @@ div.element-container:has(.gaming-header) {
     border: 1px solid rgba(255,255,255,0.2);
     box-shadow: 0 8px 25px rgba(0,0,0,0.25), inset 0 0 20px rgba(255,255,255,0.05);
 }
-
+ 
 /* Title */
-
+ 
 .header-title {
     margin: 0;
     color: white;
@@ -216,18 +209,18 @@ div.element-container:has(.gaming-header) {
     font-weight: 800;
     letter-spacing: -0.5px;
 }
-
+ 
 .header-subtitle {
     margin-top: 5px;
     color: rgba(255,255,255,0.68);
     font-size: 14px;
     letter-spacing: 0.5px;
 }
-
+ 
 </style>
 """, unsafe_allow_html=True)
-
-
+ 
+ 
 st.markdown("""
 <div class="gaming-header">
 <div class="header-content">
@@ -244,7 +237,7 @@ PLAYER BEHAVIOR PREDICTION • MACHINE LEARNING • DATA SCIENCE
 </div>
 </div>
 """, unsafe_allow_html=True)
-
+ 
 # ==========================================
 # 3. Data Loading & Graph Generation (Cached)
 # ==========================================
