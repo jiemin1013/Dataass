@@ -106,142 +106,81 @@ div.stButton > button:focus:not(:active) {
 """, unsafe_allow_html=True)
 
 # ==========================================
-# PREMIUM HEADER
+# PREMIUM HEADER & TABS STYLING
 # ==========================================
 
 st.markdown("""
 <style>
-
-/* ---------- Fixed Header + Fused Navigation ---------- */
-
-div.element-container:has(.gaming-header) {
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 99999 !important;
-    margin: 0 !important;
-}
-
-/* Create room at the bottom of the purple header for the tab navigation */
-.gaming-header {
-    padding: 30px 35px 78px 35px !important;
-    margin: 0 !important;
-    border-radius: 22px 22px 0 0 !important;
-}
-
-/* ---------- MAIN HEADER ---------- */
-
 .gaming-header {
     width: 100%;
-    padding: 38px 35px 28px 35px;
-    margin-bottom: 0px; /* Remove bottom margin to make content below tighter */
-    border-radius: 22px 22px 0 0; /* Only round the top — the tab bar below rounds the bottom, so the two read as one block */
-    overflow: hidden;
+    padding: 38px 35px 75px 35px !important; 
+    margin-bottom: 0px !important;
+    border-radius: 22px 22px 0 0 !important;
     position: relative;
-
+    overflow: hidden;
     background: radial-gradient(circle at 90% 20%, rgba(155, 89, 182, 0.25), transparent 35%),
                 radial-gradient(circle at 10% 80%, rgba(106, 13, 173, 0.18), transparent 35%),
                 linear-gradient(135deg, #16002b 0%, #26004a 45%, #12001f 100%);
     box-shadow: 0 15px 45px rgba(72, 0, 120, 0.18);
 }
 
-/* Decorative glow */
-
 .gaming-header::before {
-    content: "";
-    position: absolute;
-    width: 280px;
-    height: 280px;
-    right: -100px;
-    top: -130px;
-    border-radius: 50%;
-
-    background: rgba(190, 120, 255, 0.15);
-    filter: blur(20px);
+    content: ""; position: absolute; width: 280px; height: 280px;
+    right: -100px; top: -130px; border-radius: 50%;
+    background: rgba(190, 120, 255, 0.15); filter: blur(20px);
 }
 
-.gaming-header::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: linear-gradient(90deg, #6A0DAD, #b45cff, #6A0DAD);
-    background-size: 200% 100%;
-    animation: gradientMove 4s linear infinite;
+.header-content { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; }
+.logo-area { display: flex; align-items: center; gap: 18px; }
+.header-title { margin: 0; color: white; font-size: 32px; font-weight: 800; letter-spacing: -0.5px; }
+.header-subtitle { margin-top: 5px; color: rgba(255,255,255,0.68); font-size: 14px; letter-spacing: 0.5px; }
+
+div[data-testid="stTabs"] {
+    margin-top: -65px !important; 
+    position: relative !important;
+    z-index: 999 !important;
 }
 
-@keyframes gradientMove {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 200% 50%; }
+div[data-baseweb="tab-list"] {
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0 35px !important;
 }
 
-/* Header content */
-
-.header-content {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+div[data-baseweb="tab-border"], 
+div[data-baseweb="tab-highlight"] {
+    display: none !important;
+    opacity: 0 !important;
 }
 
-/* Logo */
-
-.logo-area {
-    display: flex;
-    align-items: center;
-    gap: 18px;
+div[data-baseweb="tab"] {
+    background: transparent !important;
+    border: none !important;
+}
+div[data-baseweb="tab"] p {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
 }
 
-.logo-icon {
-    width: 65px;
-    height: 65px;
-    border-radius: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 34px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.05));
-    border: 1px solid rgba(255,255,255,0.2);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.25), inset 0 0 20px rgba(255,255,255,0.05);
+div[data-baseweb="tab"][aria-selected="true"] {
+    background: transparent !important;
+    border-bottom: 3px solid #d9a7ff !important;
 }
-
-/* Title */
-
-.header-title {
-    margin: 0;
-    color: white;
-    font-size: 32px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
+div[data-baseweb="tab"][aria-selected="true"] p {
+    color: #ffffff !important;
 }
-
-.header-subtitle {
-    margin-top: 5px;
-    color: rgba(255,255,255,0.68);
-    font-size: 14px;
-    letter-spacing: 0.5px;
-}
-
 </style>
-""", unsafe_allow_html=True)
 
-
-st.markdown("""
 <div class="gaming-header">
-<div class="header-content">
-<div class="logo-area">
-<div>
-<div class="header-title">
-Online Gaming Analytics
-</div>
-<div class="header-subtitle">
-PLAYER BEHAVIOR PREDICTION • MACHINE LEARNING • DATA SCIENCE
-</div>
-</div>
-</div>
-</div>
+    <div class="header-content">
+        <div class="logo-area">
+            <div>
+                <div class="header-title">Online Gaming Analytics</div>
+                <div class="header-subtitle">PLAYER BEHAVIOR PREDICTION • MACHINE LEARNING • DATA SCIENCE</div>
+            </div>
+        </div>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -1478,14 +1417,6 @@ with tab_why:
                 """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
-
-    st.markdown("##### Built With")
-    tech_stack = [
-        "Python", "Streamlit", "Pandas", "NumPy", "Scikit-learn",
-        "XGBoost", "Seaborn", "Matplotlib", "Plotly"
-    ]
-    badges_html = "".join([f'<span class="tech-badge">{t}</span>' for t in tech_stack])
-    st.markdown(f"<div>{badges_html}</div>", unsafe_allow_html=True)
 
 # ------------------------------------------
 # TAB 3: Prediction Result
