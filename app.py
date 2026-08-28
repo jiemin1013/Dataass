@@ -106,110 +106,142 @@ div.stButton > button:focus:not(:active) {
 """, unsafe_allow_html=True)
 
 # ==========================================
-# PREMIUM HEADER & TABS STYLING
+# PREMIUM HEADER
 # ==========================================
 
 st.markdown("""
 <style>
-/* 1. 紫色 Header */
+
+/* ---------- Fixed Header + Fused Navigation ---------- */
+
+div.element-container:has(.gaming-header) {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 99999 !important;
+    margin: 0 !important;
+}
+
+/* Create room at the bottom of the purple header for the tab navigation */
+.gaming-header {
+    padding: 30px 35px 78px 35px !important;
+    margin: 0 !important;
+    border-radius: 22px 22px 0 0 !important;
+}
+
+/* ---------- MAIN HEADER ---------- */
+
 .gaming-header {
     width: 100%;
-    padding: 38px 35px 90px 35px !important; 
-    margin-bottom: 0px !important;
-    border-radius: 22px 22px 0 0 !important;
-    position: relative;
+    padding: 38px 35px 28px 35px;
+    margin-bottom: 0px; /* Remove bottom margin to make content below tighter */
+    border-radius: 22px 22px 0 0; /* Only round the top — the tab bar below rounds the bottom, so the two read as one block */
     overflow: hidden;
+    position: relative;
+
     background: radial-gradient(circle at 90% 20%, rgba(155, 89, 182, 0.25), transparent 35%),
                 radial-gradient(circle at 10% 80%, rgba(106, 13, 173, 0.18), transparent 35%),
                 linear-gradient(135deg, #16002b 0%, #26004a 45%, #12001f 100%);
     box-shadow: 0 15px 45px rgba(72, 0, 120, 0.18);
 }
 
+/* Decorative glow */
+
 .gaming-header::before {
-    content: ""; position: absolute; width: 280px; height: 280px;
-    right: -100px; top: -130px; border-radius: 50%;
-    background: rgba(190, 120, 255, 0.15); filter: blur(20px);
+    content: "";
+    position: absolute;
+    width: 280px;
+    height: 280px;
+    right: -100px;
+    top: -130px;
+    border-radius: 50%;
+
+    background: rgba(190, 120, 255, 0.15);
+    filter: blur(20px);
 }
 
-.header-content { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; }
-.logo-area { display: flex; align-items: center; gap: 18px; }
-.header-title { margin: 0; color: white; font-size: 32px; font-weight: 800; letter-spacing: -0.5px; }
-.header-subtitle { margin-top: 5px; color: rgba(255,255,255,0.68); font-size: 14px; letter-spacing: 0.5px; }
-
-
-/* ==========================================
-   2. 精准化 Tabs 样式：未选中纯白，选中保持原生红色
-========================================== */
-
-/* 将 Tabs 容器上移进入紫色区域 */
-div[data-testid="stTabs"] {
-    margin-top: -75px !important; 
-    position: relative !important;
-    z-index: 9999 !important;
+.gaming-header::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #6A0DAD, #b45cff, #6A0DAD);
+    background-size: 200% 100%;
+    animation: gradientMove 4s linear infinite;
 }
 
-/* 强制透明化 Tab 的外层背景，去掉灰色底块 */
-.stTabs, 
-.stTabs > div:first-child,
-.stTabs div[data-baseweb="tab-list"] {
-    background-color: transparent !important;
-    background: transparent !important;
-    border: none !important;
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
 }
 
-/* 只隐藏横跨全屏的灰色长底线，不碰选中状态 */
-.stTabs div[data-baseweb="tab-border"] {
-    display: none !important;
+/* Header content */
+
+.header-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.stTabs button[data-baseweb="tab"] {
-    background-color: transparent !important;
-    border: none !important;
-    padding: 0 0 8px 0 !important;
+/* Logo */
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 18px;
 }
 
-/* ==========================================
-   TAB TEXT COLOR
-   ========================================== */
-
-/* 未选择的 Tab：纯白色 */
-.stTabs button[data-baseweb="tab"][aria-selected="false"],
-.stTabs button[data-baseweb="tab"][aria-selected="false"] *,
-.stTabs button[data-baseweb="tab"][aria-selected="false"] p,
-.stTabs button[data-baseweb="tab"][aria-selected="false"] span,
-.stTabs button[data-baseweb="tab"][aria-selected="false"] div {
-    color: #ffffff !important;
-    opacity: 1 !important;
-    font-weight: 600 !important;
+.logo-icon {
+    width: 65px;
+    height: 65px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.05));
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.25), inset 0 0 20px rgba(255,255,255,0.05);
 }
 
-/* Hover 时依然保持白色 */
-.stTabs button[data-baseweb="tab"][aria-selected="false"]:hover,
-.stTabs button[data-baseweb="tab"][aria-selected="false"]:hover *,
-.stTabs button[data-baseweb="tab"][aria-selected="false"]:hover p {
-    color: #ffffff !important;
-    opacity: 1 !important;
+/* Title */
+
+.header-title {
+    margin: 0;
+    color: white;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
 }
 
-/* 当前选中的 Tab：保持红色 */
-.stTabs button[data-baseweb="tab"][aria-selected="true"],
-.stTabs button[data-baseweb="tab"][aria-selected="true"] *,
-.stTabs button[data-baseweb="tab"][aria-selected="true"] p {
-    color: #ff3b5c !important;
-    opacity: 1 !important;
-    font-weight: 700 !important;
+.header-subtitle {
+    margin-top: 5px;
+    color: rgba(255,255,255,0.68);
+    font-size: 14px;
+    letter-spacing: 0.5px;
 }
+
 </style>
+""", unsafe_allow_html=True)
 
+
+st.markdown("""
 <div class="gaming-header">
-    <div class="header-content">
-        <div class="logo-area">
-            <div>
-                <div class="header-title">Online Gaming Analytics</div>
-                <div class="header-subtitle">PLAYER BEHAVIOR PREDICTION • MACHINE LEARNING • DATA SCIENCE</div>
-            </div>
-        </div>
-    </div>
+<div class="header-content">
+<div class="logo-area">
+<div>
+<div class="header-title">
+Online Gaming Analytics
+</div>
+<div class="header-subtitle">
+PLAYER BEHAVIOR PREDICTION • MACHINE LEARNING • DATA SCIENCE
+</div>
+</div>
+</div>
+</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -489,6 +521,105 @@ def generate_eda_slider_html(images_b64, titles):
     """
     return html
 
+# ==========================================
+# PREMIUM NAVIGATION TABS — INSIDE THE HEADER
+# ==========================================
+
+st.markdown("""
+<style>
+/* Visually pull the Streamlit tab block into the purple header */
+div.element-container:has(div[data-testid="stTabs"]) {
+    margin-top: -72px !important;
+    position: relative !important;
+    z-index: 100000 !important;
+}
+
+/* Transparent navigation strip = same purple background as the header */
+div[data-testid="stTabs"] > div[data-baseweb="tab-list"] {
+    position: sticky !important;
+    top: 112px !important;
+    z-index: 100000 !important;
+    width: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 0 22px 22px !important;
+    padding: 7px 35px 0 35px !important;
+    margin: 0 !important;
+    gap: 8px !important;
+    box-shadow: none !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none !important;
+}
+
+div[data-testid="stTabs"] > div[data-baseweb="tab-list"]::-webkit-scrollbar {
+    display: none !important;
+}
+
+.stTabs [data-baseweb="tab"] {
+    height: 42px !important;
+    padding: 0 5px !important;
+    margin-right: 25px !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    transition: all 0.2s ease !important;
+}
+
+.stTabs [data-baseweb="tab"]:hover {
+    background: transparent !important;
+}
+
+.stTabs [data-baseweb="tab"][aria-selected="true"] {
+    background: transparent !important;
+    border-bottom: 3px solid #d9a7ff !important;
+    box-shadow: none !important;
+}
+
+.stTabs [data-baseweb="tab-highlight"],
+.stTabs [data-baseweb="tab-border"] {
+    display: none !important;
+}
+
+.stTabs [data-baseweb="tab"] p {
+    color: rgba(255,255,255,0.62) !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.45px !important;
+    white-space: nowrap !important;
+}
+
+.stTabs [data-baseweb="tab"][aria-selected="true"] p {
+    color: #ffffff !important;
+}
+
+.stTabs [data-baseweb="tab-panel"] {
+    padding-top: 25px !important;
+}
+
+@media (max-width: 900px) {
+    .gaming-header {
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+        padding-bottom: 76px !important;
+    }
+
+    div.element-container:has(div[data-testid="stTabs"]) {
+        margin-top: -70px !important;
+    }
+
+    div[data-testid="stTabs"] > div[data-baseweb="tab-list"] {
+        top: 108px !important;
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+    }
+
+    .stTabs [data-baseweb="tab"] {
+        margin-right: 18px !important;
+    }
+}
+</style>
+""", unsafe_allow_html=True)
 
 # ==========================================
 # MODEL PERFORMANCE — BENTO CARD SYSTEM
@@ -1347,6 +1478,14 @@ with tab_why:
                 """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
+
+    st.markdown("##### Built With")
+    tech_stack = [
+        "Python", "Streamlit", "Pandas", "NumPy", "Scikit-learn",
+        "XGBoost", "Seaborn", "Matplotlib", "Plotly"
+    ]
+    badges_html = "".join([f'<span class="tech-badge">{t}</span>' for t in tech_stack])
+    st.markdown(f"<div>{badges_html}</div>", unsafe_allow_html=True)
 
 # ------------------------------------------
 # TAB 3: Prediction Result
