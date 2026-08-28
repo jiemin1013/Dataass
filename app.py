@@ -114,7 +114,6 @@ st.markdown("""
 /* 1. 紫色 Header */
 .gaming-header {
     width: 100%;
-    /* 【修改点】：把底部的 padding 加大到 90px，让紫色框往下延伸，包裹住 Tabs */
     padding: 38px 35px 90px 35px !important; 
     margin-bottom: 0px !important;
     border-radius: 22px 22px 0 0 !important;
@@ -139,17 +138,17 @@ st.markdown("""
 
 
 /* ==========================================
-   2. 终极版 Tabs 穿透样式
+   2. 精准化 Tabs 样式：未选中白字，选中保持原生
 ========================================== */
 
-/* 【修改点】：把整个 Tabs 容器再往上提一点 (-75px)，确保完全进入紫色区域 */
+/* 将 Tabs 容器上移进入紫色区域 */
 div[data-testid="stTabs"] {
     margin-top: -75px !important; 
     position: relative !important;
     z-index: 9999 !important;
 }
 
-/* 强制透明化 Tab 的所有外层包裹层 */
+/* 强制透明化 Tab 的外层背景，去掉灰色底块 */
 .stTabs, 
 .stTabs > div:first-child,
 .stTabs div[data-baseweb="tab-list"] {
@@ -158,37 +157,27 @@ div[data-testid="stTabs"] {
     border: none !important;
 }
 
-/* 【修改点】：彻底击杀 Streamlit 原生的红色底线（全局屏蔽 tab-highlight） */
-div[data-baseweb="tab-highlight"],
+/* 只隐藏横跨全屏的灰色长底线，【不隐藏】红色的选中高亮线 */
 .stTabs div[data-baseweb="tab-border"] {
     display: none !important;
-    opacity: 0 !important;
-    background: transparent !important;
 }
 
-/* 针对所有 Tab 按钮的基础设置 */
+/* 针对所有 Tab 按钮的基础排版 */
 .stTabs button[data-baseweb="tab"] {
     background-color: transparent !important;
     border: none !important;
     padding-bottom: 8px !important;
-    /* 预留一条透明的底线，防止点击时发生高度跳动 */
-    border-bottom: 3px solid transparent !important; 
 }
 
-/* 【修改点】：暴力覆盖字体颜色。不论底层是 p 还是 span 标签，一律强转为半透明白色 */
-.stTabs button[data-baseweb="tab"] * {
-    color: rgba(255, 255, 255, 0.75) !important;
-    font-size: 14px !important;
-    font-weight: 700 !important;
-}
-
-/* 【修改点】：选中状态（Selected）- 字体变纯白，并加上属于我们的紫色高亮下划线 */
-.stTabs button[data-baseweb="tab"][aria-selected="true"] {
-    border-bottom: 3px solid #d9a7ff !important;
-}
-.stTabs button[data-baseweb="tab"][aria-selected="true"] * {
+/* 【关键修改 1】：未选中（没被点击）的 Tab 字体强制变白 */
+.stTabs button[data-baseweb="tab"][aria-selected="false"] p {
     color: #ffffff !important;
+    opacity: 0.85 !important; /* 微微半透明（85%），显得更有层次感 */
+    font-weight: 600 !important;
 }
+
+/* 【关键修改 2】：点击后（选中）的颜色保持原生效果，不进行覆写，
+   这样它就会自然显示你截图里的红色文字和红色下划线。 */
 </style>
 
 <div class="gaming-header">
