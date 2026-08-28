@@ -106,12 +106,11 @@ div.stButton > button:focus:not(:active) {
 """, unsafe_allow_html=True)
 
 # ==========================================
-# PREMIUM HEADER
+# PREMIUM HEADER & NAVIGATION TABS
 # ==========================================
 
 st.markdown("""
 <style>
-
 /* ---------- Fixed Header + Fused Navigation ---------- */
 
 div.element-container:has(.gaming-header) {
@@ -121,20 +120,13 @@ div.element-container:has(.gaming-header) {
     margin: 0 !important;
 }
 
-/* Create room at the bottom of the purple header for the tab navigation */
-.gaming-header {
-    padding: 30px 35px 78px 35px !important;
-    margin: 0 !important;
-    border-radius: 22px 22px 0 0 !important;
-}
-
 /* ---------- MAIN HEADER ---------- */
 
 .gaming-header {
     width: 100%;
-    padding: 38px 35px 28px 35px;
-    margin-bottom: 0px; /* Remove bottom margin to make content below tighter */
-    border-radius: 22px 22px 0 0; /* Only round the top — the tab bar below rounds the bottom, so the two read as one block */
+    padding: 38px 35px 65px 35px !important; 
+    margin-bottom: 0px !important; 
+    border-radius: 22px 22px 0 0 !important;
     overflow: hidden;
     position: relative;
 
@@ -154,7 +146,6 @@ div.element-container:has(.gaming-header) {
     right: -100px;
     top: -130px;
     border-radius: 50%;
-
     background: rgba(190, 120, 255, 0.15);
     filter: blur(20px);
 }
@@ -186,28 +177,11 @@ div.element-container:has(.gaming-header) {
     justify-content: space-between;
 }
 
-/* Logo */
-
 .logo-area {
     display: flex;
     align-items: center;
     gap: 18px;
 }
-
-.logo-icon {
-    width: 65px;
-    height: 65px;
-    border-radius: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 34px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.05));
-    border: 1px solid rgba(255,255,255,0.2);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.25), inset 0 0 20px rgba(255,255,255,0.05);
-}
-
-/* Title */
 
 .header-title {
     margin: 0;
@@ -224,9 +198,55 @@ div.element-container:has(.gaming-header) {
     letter-spacing: 0.5px;
 }
 
+div[data-testid="stTabs"] {
+    margin-top: -65px !important;
+    position: relative !important;
+    z-index: 99999 !important;
+}
+
+div[data-testid="stTabs"] > div[data-baseweb="tab-list"] {
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0 35px !important; 
+    gap: 15px !important;
+}
+
+.stTabs [data-baseweb="tab-border"],
+.stTabs [data-baseweb="tab-highlight"] {
+    display: none !important;
+}
+
+.stTabs [data-baseweb="tab"] {
+    background: transparent !important;
+    border: none !important;
+    padding-bottom: 8px !important;
+}
+.stTabs [data-baseweb="tab"] p {
+    color: rgba(255, 255, 255, 0.65) !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+}
+
+.stTabs [data-baseweb="tab"][aria-selected="true"] {
+    background: transparent !important;
+    border-bottom: 3px solid #d9a7ff !important; 
+}
+.stTabs [data-baseweb="tab"][aria-selected="true"] p {
+    color: #ffffff !important;
+}
+
+@media (max-width: 900px) {
+    .gaming-header {
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+    }
+    div[data-testid="stTabs"] > div[data-baseweb="tab-list"] {
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+    }
+}
 </style>
 """, unsafe_allow_html=True)
-
 
 st.markdown("""
 <div class="gaming-header">
